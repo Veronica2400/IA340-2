@@ -32,7 +32,27 @@ the code worked successfully. */
 
 -- 4.7
 
-/* 
+WITH va_population_last_5_years AS (
+  SELECT year, pop
+  FROM population
+  WHERE fips = '51'  -- FIPS code for Virginia
+  ORDER BY year DESC
+  LIMIT 6  -- We need at least 6 years to calculate the 5-year growth rates
+)
+
+SELECT
+  current.year AS current_year,
+  previous.year AS previous_year,
+  current.pop AS current_population,
+  previous.pop AS previous_population,
+  ((current.pop - previous.pop) / previous.pop::FLOAT) * 100 AS growth_rate
+FROM va_population_last_5_years current
+JOIN va_population_last_5_years previous
+  ON current.year = previous.year + 1  -- Join each year with the previous year
+ORDER BY current.year DESC;
+
+/* My prompt was: can you calculate the VA population growth rate of each year for the past five years?
+Yes, I had to modify my prompt multiple times to get chatgpt to produce the correct answer. */
 
 -- 4.8
 
